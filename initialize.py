@@ -139,7 +139,19 @@ def initialize_retriever():
     splitted_docs.extend(integrated_docs_all)
 
     # ベクターストアの作成
-    db = Chroma.from_documents(splitted_docs, embedding=embeddings)
+    import os
+
+    if os.path.exists(".healthX_db"):
+        db = Chroma(
+            persist_directory=".healthX_db",
+            embedding_function=embeddings
+        )
+    else:
+        db = Chroma.from_documents(
+            splitted_docs,
+            embedding=embeddings,
+            persist_directory=".healthX_db"
+        )
 
     # ベクターストアを検索するRetrieverの作成
     st.session_state.retriever = db.as_retriever(search_kwargs={"k": ct.TOP_K})
